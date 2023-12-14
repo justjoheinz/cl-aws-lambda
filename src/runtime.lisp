@@ -9,49 +9,43 @@
 
 (in-package :cl-aws-lambda/runtime)
 
-
 (defmacro handling-initialization-errors (() &body body)
-  `(restart-case
-       (handler-bind ((environment-error (lambda (e)
-                                           (initialization-error e)
-                                           (invoke-restart 'die)))
-                      (error (lambda (e)
-                               (initialization-error (handle-uncaught-initialization-error e))
-                               (invoke-restart 'die))))
-
-         ,@body)
-
+  `(restart-case (handler-bind ((environment-error
+                                 (lambda (e)
+                                   (initialization-error e)
+                                   (invoke-restart 'die)))
+                                (error
+                                  (lambda (e)
+                                    (initialization-error
+                                      (handle-uncaught-initialization-error e))
+                                    (invoke-restart 'die))))
+                   ,@body)
      (die () (uiop:quit 1))))
 
-
 (defmacro handling-invocation-errors (() &body body)
-  `(restart-case
-       (handler-bind ((runtime-error (lambda (e)
-                                       (invocation-error e)
-                                       (invoke-restart 'continue)))
-                      (error (lambda (e)
-                               (invocation-error (handle-uncaught-invocation-error e))
-                               (invoke-restart 'continue))))
-
-         ,@body)
+  `(restart-case (handler-bind ((runtime-error
+                                 (lambda (e)
+                                   (invocation-error e)
+                                   (invoke-restart 'continue)))
+                                (error
+                                  (lambda (e)
+                                    (invocation-error
+                                      (handle-uncaught-invocation-error e))
+                                    (invoke-restart 'continue))))
+                   ,@body)
      (continue ()
        ;; Let the iteration continue, the error will be handled in the handler-bind form
        nil)))
 
-
 (defun main ()
   "Main entry point that bootstraps the runtime and then invokes the handler function."
-
   (declare (optimize space (speed 3)))
   (log:config t :info)
-
   (vom-json:with-json-logging
-    (handling-initialization-errors ()
-      (with-environment ()
+    (handling-initialization-errors nil
+      (with-environment nil
         (let ((handler-function (symbol-function (read-from-string *handler*))))
-
           (log:info "Using handler function ~a." *handler*)
-
           (do-events (event)
-            (handling-invocation-errors ()
+            (handling-invocation-errors nil
               (invocation-response (funcall handler-function event)))))))))
