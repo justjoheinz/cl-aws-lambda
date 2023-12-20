@@ -4,5 +4,17 @@
   :version "2023-10-21"))
 ("cl-aws-lambda" .
  (:class qlot/source/github:source-github
-  :initargs (:repos "fisxoj/cl-aws-lambda" :ref nil :branch nil :tag nil)
-  :version "github-6ed1efbacd4a98410b9b1b340614e0d35c4507de"))
+  :initargs (:repos "justjoheinz/cl-aws-lambda" :ref nil :branch "wip" :tag nil)
+  :version "github-c4b829e3a7a4dc9c672b9afc0e65d9ca668733be"))
+("vom" .
+ (:class qlot/source/ql:source-ql
+  :initargs (:%version :latest)
+  :version "ql-2023-10-21"))
+("vom-json" .
+ (:class qlot/source/ql:source-ql
+  :initargs (:%version :latest)
+  :version "ql-2023-10-21"))
+("uiop" .
+ (:class qlot/source/ql:source-ql
+  :initargs (:%version :latest)
+  :version "ql-2023-10-21"))

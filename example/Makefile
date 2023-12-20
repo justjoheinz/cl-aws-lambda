@@ -18,7 +18,7 @@ all: default
 help: ## Display this help section
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / {printf "\033[36m%-38s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-bootstrap: $(wildcard *.asd) $(wildcard *.lisp) ## Build a lisp image as a provided runtime
+bootstrap: $(wildcard *.asd) $(wildcard *.lisp) qlfile ## Build a lisp image as a provided runtime
 	$(RUNC) build ../ -t cl-lambda-builder
 	$(RUNC) volume create cl-aws-asdf-cache || true
 	$(RUNC) volume create cl-aws-quicklisp || true
@@ -57,13 +57,14 @@ invoke: ## Invoke the function with a given payload
 		response.txt
 
 invoke-local: bootstrap ## Invoke the function locally using a container
+	@echo "\nInvoke via\n\thttp://localhost:9000/2015-03-31/functions/function/invocations\n"
 	$(RUNC) run --platform=linux/amd64 -p 9000:8080 --rm -v "${PWD}":/var/runtime:Z public.ecr.aws/lambda/provided:al2023 ${HANDLER}
 
 clean-artifacts: ## Remove compiled artifacts
-	rm -f function.zip bootstrap
+	-rm -f function.zip bootstrap
 
 clean-container: ## Remove container cache volumes
-	$(RUNC) volume rm cl-aws-asdf-cache
-	$(RUNC) volume rm cl-aws-quicklisp
+	-$(RUNC) volume rm cl-aws-asdf-cache
+	-$(RUNC) volume rm cl-aws-quicklisp
 
 clean: clean-artifacts clean-container ## Remove everything
