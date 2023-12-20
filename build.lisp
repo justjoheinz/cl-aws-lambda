@@ -3,9 +3,9 @@
 
 (push (uiop:getcwd) asdf:*central-registry*)
 
-;; #+sb-core-compression
-;; (defmethod asdf:perform ((o asdf/bundle:program-op) (c asdf:system))
-;;   (uiop:dump-image (asdf:output-file o c) :executable t :compression 9))
+#+sb-core-compression
+(defmethod asdf:perform ((o asdf/bundle:program-op) (c asdf:system))
+  (uiop:dump-image (asdf:output-file o c) :executable t :compression 9))
 
 (let ((system-name (uiop:make-symbol* (string-upcase (if (uiop:getenvp "LAMBDA_SYSTEM_NAME")
                                                          (uiop:getenv "LAMBDA_SYSTEM_NAME")
