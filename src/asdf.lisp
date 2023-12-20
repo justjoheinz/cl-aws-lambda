@@ -1,6 +1,6 @@
 (defpackage cl-aws-lambda/asdf
-  (:use :cl)
-  (:export :lambda-system))
+  (:use #:cl)
+  (:export #:lambda-system))
 
 (in-package :cl-aws-lambda/asdf)
 
