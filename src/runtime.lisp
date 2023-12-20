@@ -40,7 +40,7 @@
 (defun main ()
   "Main entry point that bootstraps the runtime and then invokes the handler function."
   (declare (optimize space (speed 3)))
-  (log:config t :info)
+  (log:config t :debug)
   (vom-json:with-json-logging
       (handling-initialization-errors nil
                                       (with-environment nil
